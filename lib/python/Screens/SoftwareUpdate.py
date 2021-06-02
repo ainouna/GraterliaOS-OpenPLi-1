@@ -6,19 +6,18 @@ from Screens.Standby import TryQuitMainloop
 from Screens.TextBox import TextBox
 from Screens.About import CommitInfo
 from Components.config import config
-from Components.About import about
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Ipkg import IpkgComponent
 from Components.Sources.StaticText import StaticText
 from Components.Slider import Slider
 from Tools.BoundFunction import boundFunction
 from Tools.Directories import fileExists
-from Tools.HardwareInfo import HardwareInfo
 from enigma import eTimer, getBoxType, eDVBDB
 from urllib import urlopen
 import socket
 import os
 import re
+import time
 
 class UpdatePlugin(Screen, ProtectedScreen):
 	skin = """
@@ -76,6 +75,7 @@ class UpdatePlugin(Screen, ProtectedScreen):
 			config.ParentalControl.config_sections.software_update.value
 
 	def checkTraficLight(self):
+
 		self.activityTimer.callback.remove(self.checkTraficLight)
 		self.activityTimer.start(100, False)
 
@@ -123,16 +123,15 @@ class UpdatePlugin(Screen, ProtectedScreen):
 	def getLatestImageTimestamp(self):
 		currentTimeoutDefault = socket.getdefaulttimeout()
 		socket.setdefaulttimeout(3)
+		latestImageTimestamp = ""
 		try:
 			# TODO: Use Twisted's URL fetcher, urlopen is evil. And it can
 			# run in parallel to the package update.
-			from time import strftime
-			from datetime import datetime
-			imageVersion = about.getImageTypeString().split(" ")[1]
-			imageVersion = (int(imageVersion) < 5 and "%.1f" or "%s") % int(imageVersion)
-			latestImageTimestamp = datetime.fromtimestamp(int(urlopen("http://openpli.org/download/timestamp/%s~%s" % (HardwareInfo().get_device_model(), imageVersion)).read())).strftime(_("%Y-%m-%d %H:%M"))
+			downloadpage = [x for x in urlopen("http://openpli.org/").read().split('</a>') if getBoxType() in x][0].split('"')[1]
+			latestImageTimestamp = re.findall('<dd>(.*?)</dd>', urlopen("http://openpli.org/%s" % downloadpage).read())[0][:16]
+			latestImageTimestamp = time.strftime(_("%d-%b-%Y %-H:%M"), time.strptime(latestImageTimestamp, "%Y/%m/%d %H:%M"))
 		except:
-			latestImageTimestamp = ""
+			pass
 		socket.setdefaulttimeout(currentTimeoutDefault)
 		return latestImageTimestamp
 
@@ -204,10 +203,10 @@ class UpdatePlugin(Screen, ProtectedScreen):
 					message += "(" + (ngettext("%s updated package available", "%s updated packages available", self.total_packages) % self.total_packages) + ")"
 					if self.total_packages > 150:
 						message += " " + _("Reflash recommended!")
-					choices = [(_("Update and reboot (recommended)"), "cold"),
-						(_("Update and ask to reboot"), "hot"),
-						(_("Update channel list only"), "channels"),
-						(_("Show packages to be upgraded"), "showlist")]
+					# choices = [(_("Update and reboot (recommended)"), "cold"),
+					choices = [(_("Update and ask to reboot"), "hot"),
+							(_("Update channel list only"), "channels"),
+							(_("Show packages to be upgraded"), "showlist")]
 				else:
 					message = _("No updates available")
 					choices = []
@@ -245,7 +244,7 @@ class UpdatePlugin(Screen, ProtectedScreen):
 					error = _("Update failed. Your receiver does not have a working internet connection.")
 				self.status.setText(_("Error") +  " - " + error)
 		elif event == IpkgComponent.EVENT_LISTITEM:
-			if 'enigma2-plugin-settings-' in param[0] and self.channellist_only > 0:
+			if 'enigma2-plugin-channels-' in param[0] and self.channellist_only > 0:
 				self.channellist_name = param[0]
 				self.channellist_only = 2
 		#print event, "-", param

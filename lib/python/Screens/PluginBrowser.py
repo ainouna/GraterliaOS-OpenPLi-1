@@ -54,6 +54,8 @@ class PluginBrowser(Screen, ProtectedScreen):
 
 		self.firsttime = True
 
+		self["key_red"] = self["red"] = Label(_("Manage extensions"))
+		# self["key_green"] = self["green"] = Label(_("Download plugins"))
 		self.list = []
 		self["list"] = PluginList(self.list)
 
@@ -63,27 +65,15 @@ class PluginBrowser(Screen, ProtectedScreen):
 			"back": self.close,
 			"menu": self.exit,
 		})
-
-		if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/J00zekOPKGmgr/GOSopkg.pyo")):
-			self["key_red"] = self["red"] = Label(_("Manage extensions"))
-			self["key_green"] = self["green"] = Label("")
-			self["PluginDownloadActions"] = ActionMap(["ColorActions"],
-			{
-				"red": self.openGOSopkg
-			})
-		else:
-			self["key_red"] = self["red"] = Label(_("Remove plugins"))
-			self["key_green"] = self["green"] = Label(_("Download plugins"))
-			self["PluginDownloadActions"] = ActionMap(["ColorActions"],
-				{
-					"red": self.delete,
-					"green": self.download
-				})
-
+		self["PluginDownloadActions"] = ActionMap(["ColorActions"],
+		{
+			"red": self.openExtensionmanager,
+			# "green": self.download
+		})
 		self["DirectionActions"] = ActionMap(["DirectionActions"],
 		{
-			"moveUp2": self.moveUp,
-			"moveDown0": self.moveDown
+			"moveUp": self.moveUp,
+			"moveDown": self.moveDown
 		})
 		self["NumberActions"] = NumberActionMap(["NumberActions"],
 		{
@@ -207,27 +197,17 @@ class PluginBrowser(Screen, ProtectedScreen):
 		self.session.openWithCallback(self.PluginDownloadBrowserClosed, PluginDownloadBrowser, PluginDownloadBrowser.DOWNLOAD, self.firsttime)
 		self.firsttime = False
 
-	def PluginDownloadBrowserClosed(self, ret = 0):
+	def PluginDownloadBrowserClosed(self):
 		self.updateList()
 		self.checkWarnings()
 
 	def openExtensionmanager(self):
-		if fileExists(resolveFilename(SCOPE_PLUGINS, "SystemPlugins/SoftwareManager/plugin.py")):
-			try:
-				from Plugins.SystemPlugins.SoftwareManager.plugin import PluginManager
-			except ImportError:
-				self.session.open(MessageBox, _("The software management extension is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
-			else:
-				self.session.openWithCallback(self.PluginDownloadBrowserClosed, PluginManager)
-
-	def openGOSopkg(self):
-		if fileExists(resolveFilename(SCOPE_PLUGINS, "Extensions/J00zekOPKGmgr/GOSopkg.pyo")):
-			try:
-				from Plugins.Extensions.J00zekOPKGmgr.GOSopkg import GOSopkg
-			except ImportError:
-				self.session.open(MessageBox, _("J00zekOPKGmgr*is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
-			else:
-				self.session.openWithCallback(self.PluginDownloadBrowserClosed, GOSopkg, self)
+		try:
+			from Plugins.SystemPlugins.SoftwareManager.plugin import PacketManager
+		except ImportError:
+			self.session.open(MessageBox, _("The software management extension is not installed!\nPlease install it: (enigma2-plugin-softwaremanager)."), type = MessageBox.TYPE_INFO,timeout = 10 )
+		else:
+			self.session.openWithCallback(self.PluginDownloadBrowserClosed, PacketManager, self)
 
 class PluginDownloadBrowser(Screen):
 	DOWNLOAD = 0

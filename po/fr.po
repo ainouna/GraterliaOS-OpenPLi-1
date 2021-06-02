@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-21 17:30+0200\n"
-"PO-Revision-Date: 2016-07-21 18:06+0200\n"
+"POT-Creation-Date: 2016-11-04 09:08+0100\n"
+"PO-Revision-Date: 2016-11-04 12:30+0100\n"
 "Last-Translator: Pr2 <dummy@dummy.com>\n"
 "Language-Team: french\n"
 "Language: fr\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.11\n"
 
 msgid ""
 "\n"
@@ -127,6 +127,9 @@ msgid ""
 msgstr ""
 "\n"
 "Visualiser, installer et retirer paquets disponibles ou installés."
+
+msgid " (0 - all networks)"
+msgstr " (0 - tous les réseaux)"
 
 #, python-format
 msgid " (Channel %s)"
@@ -276,9 +279,6 @@ msgid "%d wireless network found!"
 msgid_plural "%d wireless networks found!"
 msgstr[0] "%d réseau sans fil trouvé!"
 msgstr[1] "%d réseaux sans fil trouvés!"
-
-msgid "%d-%b-%Y %-H:%M"
-msgstr "%d-%b-%Y %-H:%M"
 
 msgid "%d-%m"
 msgstr "%d-%m"
@@ -449,10 +449,6 @@ msgstr "8"
 msgid "9"
 msgstr "9"
 
-#, python-format
-msgid ": %s"
-msgstr ": %s"
-
 msgid ": 0000 - default (disabled)"
 msgstr ": 0000 - par défaut (désactivé)"
 
@@ -514,6 +510,9 @@ msgid ""
 msgstr ""
 "Un enregistrement a été démarré:\n"
 "%s"
+
+msgid "A recording is currently running on the selected tuner. Please select a different tuner or consider to stop the recording to try again."
+msgstr "Un enregistrement est en cours sur le tuner sélectionné. Veuillez choisir un autre tuner ou envisager d’arrêter l’enregistrement et réessayer."
 
 msgid ""
 "A recording is currently running.\n"
@@ -579,6 +578,15 @@ msgstr "Downmix AC3"
 
 msgid "AGC:"
 msgstr "AGC:"
+
+msgid "ASS file"
+msgstr "Fichier ASS"
+
+msgid "ATSC"
+msgstr "ATSC"
+
+msgid "ATSC provider"
+msgstr "Fournisseur ATSC"
 
 msgid "Abort"
 msgstr "Abandon"
@@ -934,6 +942,9 @@ msgstr "Mode création"
 msgid "Auto"
 msgstr "Auto"
 
+msgid "Auto Diseqc"
+msgstr "Auto DiSEqC"
+
 msgid "Auto EXIF Orientation rotation/flipping"
 msgstr "Orientation EXIF automatique rotation/retournement (seulement jpg)"
 
@@ -1225,6 +1236,15 @@ msgstr "Chaîne:"
 msgid "Channellist menu"
 msgstr "Liste des chaînes"
 
+msgid "Channelnumber and picon"
+msgstr "Numéro de la chaîne et picon"
+
+msgid "Channelnumber and servicename"
+msgstr "Numéro de la chaîne et nom du service"
+
+msgid "Channelnumber, picon and servicename"
+msgstr "Numéro de la chaîne, picon et nom du service"
+
 msgid "Chap."
 msgstr "Chap."
 
@@ -1308,16 +1328,13 @@ msgstr "Fermer PiP en quittant"
 msgid "Close title selection"
 msgstr "Fermer sélection titre"
 
+msgid "Code R. LP-HP & Guard Int."
+msgstr "Code R. LP-HP & Int. de garde"
+
 msgid "Code rate HP"
 msgstr "Taux de codage HP"
 
 msgid "Code rate LP"
-msgstr "Taux de codage LP"
-
-msgid "Coderate HP"
-msgstr "Taux de codage HP"
-
-msgid "Coderate LP"
 msgstr "Taux de codage LP"
 
 msgid "Collection name"
@@ -1355,6 +1372,9 @@ msgstr "Complexe (autorise mélange pistes audio et aspects)"
 
 msgid "Composition of the recording filenames"
 msgstr "Composition noms de fichiers d'enregistrement"
+
+msgid "Config Scan Details"
+msgstr "Configurer les détails du scan"
 
 msgid "Config resolution of pictures"
 msgstr "Configurer la résolution des images"
@@ -1630,6 +1650,9 @@ msgstr "Configure comment les programmations terminées apparaissent dans la lis
 msgid "Configure whether (and for how long) a second infobar will be shown when OK is pressed twice. The second infobar contains additional information about the current channel."
 msgstr "Configure si (et pour combien de temps) une deuxième barre d'informations s'affiche lorsque vous appuyez sur OK à deux reprises. La seconde barre contient des informations supplémentaires sur la chaîne actuelle."
 
+msgid "Configure whether multi channel PCM sound should be enabled."
+msgstr "Configure si la piste PCM multi canaux doit être activée."
+
 msgid "Configure whether multi channel sound tracks should be downmixed to stereo."
 msgstr "Configure si plusieurs pistes sonores doivent être remixées en stéréo."
 
@@ -1690,8 +1713,8 @@ msgstr "Connecté à"
 msgid "Console"
 msgstr "Console"
 
-msgid "Constellation"
-msgstr "Constellation"
+msgid "Constellation & FFT mode"
+msgstr "Constellation & mode FFT"
 
 msgid "Content does not fit on DVD!"
 msgstr "Le contenu ne tient pas sur le DVD!"
@@ -1742,6 +1765,9 @@ msgstr "Impossible d'enregistrer en raison d'un conflit de programmation %s"
 #, python-format
 msgid "Could not record due to invalid service %s"
 msgstr "Impossible d'enregistrer en raison d'un service non valide %s"
+
+msgid "Cover dashed flickering line for this service"
+msgstr "Couvrir les scintillements en pointillés pour ce service"
 
 msgid "Create DVD-ISO"
 msgstr "Créer DVD-ISO"
@@ -1842,14 +1868,23 @@ msgstr "Downmix DTS"
 msgid "DUAL LAYER DVD"
 msgstr "DVD DOUBLE COUCHE"
 
+msgid "DVB CI Delay"
+msgstr "DVB CI délai"
+
 msgid "DVB drivers: "
 msgstr "Pilotes DVB:"
 
 msgid "DVB subtitle black transparency"
 msgstr "Transparence des sous-titres DVB"
 
+msgid "DVB type"
+msgstr "Type DVB"
+
 msgid "DVB-C"
 msgstr "DVB-C"
+
+msgid "DVB-C ANNEX B"
+msgstr "DVB-C ANNEX B"
 
 msgid "DVB-C ANNEX C"
 msgstr "DVB-C ANNEX C"
@@ -2774,6 +2809,12 @@ msgstr "Français"
 msgid "Frequency"
 msgstr "Fréquence"
 
+msgid "Frequency & Channel"
+msgstr "Fréquence & chaîne"
+
+msgid "Frequency & Polarization"
+msgstr "Fréquence & polarisation"
+
 msgid "Frequency bands"
 msgstr "Bandes fréquence"
 
@@ -2796,8 +2837,8 @@ msgid "From :"
 msgstr "De:"
 
 #, python-format
-msgid "Frontprocessor version: %d"
-msgstr "Version du frontprocessor: %d"
+msgid "Frontprocessor version: %s"
+msgstr "Version du frontprocessor: %s"
 
 msgid "Full transparency"
 msgstr "Transparence complète"
@@ -3000,9 +3041,6 @@ msgstr "Masquer les erreurs de zapping"
 
 msgid "Hierarchy info"
 msgstr "Info hiérarchie"
-
-msgid "Hierarchy information"
-msgstr "Hiérarchie de l'Information"
 
 msgid "High bitrate support"
 msgstr "Support \"Hight bitrate\""
@@ -3259,6 +3297,12 @@ msgstr "Donnée du transpondeur non valide"
 
 msgid "Inversion"
 msgstr "Inversion"
+
+msgid "Inversion & Bandwidth"
+msgstr "Inversion & bande passante"
+
+msgid "Inversion, Pilot & Roll-off"
+msgstr "Inversion, Pilot & Roll-off"
 
 msgid "Invert"
 msgstr "Inverser"
@@ -3700,14 +3744,14 @@ msgstr "Downmix multi-canaux"
 msgid "Multi-EPG bouquet selection"
 msgstr "Sélection bouquet Multi-EPG"
 
+msgid "Multichannel PCM"
+msgstr "PCM multi-canaux"
+
 msgid "Multimedia"
 msgstr "Multimédia"
 
 msgid "Multiple service support"
 msgstr "Support service multiple"
-
-msgid "Multiplex"
-msgstr "Multiplex"
 
 msgid "Multisat"
 msgstr "Multisat"
@@ -3727,8 +3771,8 @@ msgstr "N/A"
 msgid "NEXT"
 msgstr "SUIVANT"
 
-msgid "NIM"
-msgstr "Tuner"
+msgid "NIM & Type"
+msgstr "NIM & type"
 
 msgid "NO"
 msgstr "NON"
@@ -4145,8 +4189,8 @@ msgstr "PID PCR"
 msgid "PDC"
 msgstr "PDC"
 
-msgid "PIDs"
-msgstr "PIDs"
+msgid "PGS file"
+msgstr "Fichier PGS"
 
 msgid "PIN code needed"
 msgstr "Code PIN requis"
@@ -4224,7 +4268,7 @@ msgstr "Paramètres PiP"
 msgid "Picon"
 msgstr "Picon"
 
-msgid "Picon and service name"
+msgid "Picon and servicename"
 msgstr "Picon et nom du service"
 
 msgid "Picture player"
@@ -4563,6 +4607,12 @@ msgstr "Préférer les sous-titres stockés pour le service"
 msgid "Preferred tuner"
 msgstr "Tuner préféré"
 
+msgid "Preferred tuner ATSC"
+msgstr "Tuner préféré ATSC"
+
+msgid "Preferred tuner ATSC for recordings"
+msgstr "Préférer le tuner ATSC pour enregistrer"
+
 msgid "Preferred tuner DVB-C"
 msgstr "Tuner DVB-C préféré "
 
@@ -4809,9 +4859,6 @@ msgstr "Enr"
 
 msgid "Recall to previous service"
 msgstr "Retour au service précédent"
-
-msgid "Reception Settings"
-msgstr "Paramètres de réception"
 
 msgid "Reception settings"
 msgstr "Paramètres de réception"
@@ -5109,8 +5156,8 @@ msgstr "Russe"
 msgid "S-Video"
 msgstr "S-Vidéo"
 
-msgid "SID"
-msgstr "SID"
+msgid "SCPC optimized search range"
+msgstr "Plage de recherche SCPC optimisée"
 
 msgid "SINGLE LAYER DVD"
 msgstr "DVD SIMPLE COUCHE"
@@ -5120,6 +5167,12 @@ msgstr "SNR"
 
 msgid "SNR:"
 msgstr "SNR:"
+
+msgid "SRT file"
+msgstr "Fichier SRT"
+
+msgid "SSA file"
+msgstr "Fichier SSA"
 
 msgid "SSID:"
 msgstr "SSID:"
@@ -5455,6 +5508,12 @@ msgstr "Serbe"
 msgid "Service"
 msgstr "Service"
 
+msgid "Service & PIDs"
+msgstr "Services & PIDs"
+
+msgid "Service ID"
+msgstr "ID du service"
+
 msgid "Service has been added to the favourites."
 msgstr "Le service a été ajouté aux favoris."
 
@@ -5463,6 +5522,15 @@ msgstr "Le service a été ajouté au bouquet sélectionné."
 
 msgid "Service info"
 msgstr "Info service"
+
+msgid "Service info - service & PIDs"
+msgstr "Info du service - service & PIDs"
+
+msgid "Service info - tuner live values"
+msgstr "Info du service - valeurs réelles du tuner"
+
+msgid "Service info - tuner setting values"
+msgstr "Info du service - valeurs des paramètres du tuner"
 
 msgid ""
 "Service invalid!\n"
@@ -5499,6 +5567,9 @@ msgid ""
 msgstr ""
 "Service indisponible!\n"
 "Vérifier la configuration du tuner!"
+
+msgid "Servicename"
+msgstr "Nom du service"
 
 msgid "Services"
 msgstr "Services"
@@ -5835,6 +5906,9 @@ msgstr "Simple"
 
 msgid "Simple titleset (compatibility for legacy players)"
 msgstr "Jeu titre simple (compatibilité descendante lecteurs)"
+
+msgid "Simplified Chinese"
+msgstr "Chinoix simplifié"
 
 msgid "Single"
 msgstr "Unique"
@@ -6350,6 +6424,9 @@ msgstr "Types de tuner permutables:"
 msgid "Symbol rate"
 msgstr "Fréq. symbole"
 
+msgid "Symbol rate & FEC"
+msgstr "Fréq. symbole & FEC"
+
 msgid "Symbol rate:"
 msgstr "Fréq. symbole:"
 
@@ -6358,6 +6435,9 @@ msgstr "Erreur de synchro pour revenir à l'origine!"
 
 msgid "System"
 msgstr "Système"
+
+msgid "System & Modulation"
+msgstr "Système & modulation"
 
 #. TRANSLATORS: Add here whatever should be shown in the "translator" about screen, up to 6 lines (use \n for newline)
 msgid "TRANSLATOR_INFO"
@@ -6832,6 +6912,9 @@ msgstr "Basculer du mode TV/RADIO"
 msgid "Toggle a cut mark at the current position"
 msgstr "Commuter un marqueur coupé à cette position"
 
+msgid "Toggle dashed flickering line for this service"
+msgstr "Basculer les scintillements en pointillés pour ce service"
+
 msgid "Toggle infoBar"
 msgstr "Activer la barre d'infos"
 
@@ -6863,6 +6946,9 @@ msgstr "Nombre total de clients de flux (stream) : %d (%s)"
 msgid "Track"
 msgstr "Piste"
 
+msgid "Traditional Chinese"
+msgstr "Chinois traditionnel"
+
 msgid "Transcoding: "
 msgstr "Transcodage: "
 
@@ -6880,9 +6966,6 @@ msgstr "Mode de transmission"
 
 msgid "Transponder"
 msgstr "Transpondeur"
-
-msgid "Transponder type"
-msgstr "Type transpondeur"
 
 msgid "Trash can"
 msgstr "Corbeille"
@@ -6926,14 +7009,17 @@ msgstr "Configuration tuner"
 msgid "Tuner is not supported"
 msgstr "Le tuner n'est pas supporté"
 
+msgid "Tuner live values"
+msgstr "Valeurs réelles du tuner"
+
 msgid "Tuner not available."
 msgstr "Tuner non disponible."
 
+msgid "Tuner setting values"
+msgstr "Valeur des paramètres du tuner"
+
 msgid "Tuner slot"
 msgstr "Slot tuner"
-
-msgid "Tuner status"
-msgstr "Etat tuner"
 
 #, python-format
 msgid "Tuner status %s"
@@ -6988,6 +7074,9 @@ msgstr ""
 "Veuillez attendre que votre récepteur redémarre\n"
 "Cela peut prendre quelques minutes"
 
+msgid "Uncover dashed flickering line for this service"
+msgstr "Découvrir les scintillements en pointillés pour ce service"
+
 msgid "Undo install"
 msgstr "Défaire installation"
 
@@ -7009,8 +7098,8 @@ msgstr "Unicable"
 msgid "Unicable LNB"
 msgstr "Unicable LNB"
 
-msgid "Unicable Martix"
-msgstr "Unicable Martix"
+msgid "Unicable Matrix"
+msgstr "Matrice Unicable"
 
 msgid "Uninstall"
 msgstr "Désinstaller"
@@ -7191,6 +7280,9 @@ msgstr "Péritel magnétoscope"
 msgid "VMGM (intro trailer)"
 msgstr "VMGM (intro bande-annonce)"
 
+msgid "VOB file"
+msgstr "Fichier VOB"
+
 msgid "VU+"
 msgstr "VU+"
 
@@ -7247,14 +7339,8 @@ msgstr "Vidéo: %s fps"
 msgid "VideoMode"
 msgstr "Mode vidéo"
 
-msgid "Videocodec"
-msgstr "Codec vidéo"
-
-msgid "Videoformat"
-msgstr "Format vidéo"
-
-msgid "Videosize"
-msgstr "Taille vidéo"
+msgid "Videocodec, size & format"
+msgstr "Codec vidéo, taille & format"
 
 msgid "View Rass interactive..."
 msgstr "Afficher Rass interactif..."
@@ -7466,12 +7552,6 @@ msgstr "Que voulez-vous analyser ?"
 
 msgid "When enabled enigma2 will load unlinked userbouquets. This means that userbouquets that are available, but not included in the bouquets.tv or bouquets.radio files, will still be loaded. This allows you for example to keep your own user bouquet while installed settings are upgraded"
 msgstr "Lorsqu'elle est activée, enigma2 chargera les userbouquets non liés. Cela signifie que les userbouquets qui sont disponibles, mais pas repris dans les fichiers bouquets.tv ou bouquets.radio, seront chargés."
-
-msgid "When enabled the LNB power will not be switched off in standby"
-msgstr "Lorsqu'elle est activée l’alimentation des LNBs ne sera pas éteinte en mode veille"
-
-msgid "When enabled the LNB toneburst will be forced"
-msgstr "Lorsqu'elle est activée, le LNB toneburst sera forcé"
 
 msgid "When enabled the PiP can be closed by the exit button."
 msgstr "Lorsqu'elle est activée, le PiP peut être fermé avec le bouton exit."
@@ -7990,9 +8070,6 @@ msgstr "Revenir sur le service précédemment réglé?"
 msgid "Zap back to service before positioner setup?"
 msgstr "Revenir sur le service avant le réglage positionneur?"
 
-msgid "Zap back to service before tuner setup?"
-msgstr "Revenir sur le service avant le réglage tuner?"
-
 msgid "Zap bouquets blindly on zap buttons"
 msgstr "Changer les bouquets directement avec les boutons de zap"
 
@@ -8305,6 +8382,9 @@ msgstr "Éditer les alternatifs"
 
 msgid "education/science/factual topics (general)"
 msgstr "Éducation/Science/Sujets factuels (général)"
+
+msgid "embedded"
+msgstr "embarqué"
 
 msgid "empty"
 msgstr "Vide"
@@ -8683,6 +8763,9 @@ msgstr "Pour un simple couche utilisé."
 
 msgid "off"
 msgstr "Arrêt"
+
+msgid "off or wpa2 on"
+msgstr "off ou WPA2 on"
 
 msgid "offset is"
 msgstr "Position finale sur"
@@ -9128,5 +9211,38 @@ msgstr "Zappé"
 msgid "®"
 msgstr "®"
 
-#~ msgid "OSD position setup"
-#~ msgstr "GUI position configuration"
+#~ msgid "Coderate HP"
+#~ msgstr "Taux de codage HP"
+
+#~ msgid "Coderate LP"
+#~ msgstr "Taux de codage LP"
+
+#~ msgid "Hierarchy information"
+#~ msgstr "Hiérarchie de l'Information"
+
+#~ msgid "Multiplex"
+#~ msgstr "Multiplex"
+
+#~ msgid "NIM"
+#~ msgstr "Tuner"
+
+#~ msgid "PIDs"
+#~ msgstr "PIDs"
+
+#~ msgid "SID"
+#~ msgstr "SID"
+
+#~ msgid "Transponder type"
+#~ msgstr "Type transpondeur"
+
+#~ msgid "Videocodec"
+#~ msgstr "Codec vidéo"
+
+#~ msgid "Videosize"
+#~ msgstr "Taille vidéo"
+
+#~ msgid "When enabled the LNB power will not be switched off in standby"
+#~ msgstr "Lorsqu'elle est activée l’alimentation des LNBs ne sera pas éteinte en mode veille"
+
+#~ msgid "When enabled the LNB toneburst will be forced"
+#~ msgstr "Lorsqu'elle est activée, le LNB toneburst sera forcé"

@@ -12,6 +12,8 @@
 
 #include <sstream>
 
+#include "absdiff.h"
+
 #ifndef I2C_SLAVE_FORCE
 #define I2C_SLAVE_FORCE	0x0706
 #endif
@@ -343,8 +345,8 @@ RESULT eDVBFrontendParameters::calculateDifference(const iDVBFrontendParameters 
 				diff = 1<<27;
 			else
 			{
-				diff = abs(sat.frequency - osat.frequency);
-				diff += abs(sat.symbol_rate - osat.symbol_rate);
+				diff = absdiff(sat.frequency, osat.frequency);
+				diff += absdiff(sat.symbol_rate, osat.symbol_rate);
 			}
 			return 0;
 		}
@@ -362,8 +364,8 @@ RESULT eDVBFrontendParameters::calculateDifference(const iDVBFrontendParameters 
 				diff = 1 << 27;
 			else
 			{
-				diff = abs(cable.frequency - ocable.frequency);
-				diff += abs(cable.symbol_rate - ocable.symbol_rate);
+				diff = absdiff(cable.frequency, ocable.frequency);
+				diff += absdiff(cable.symbol_rate, ocable.symbol_rate);
 			}
 			return 0;
 		}
@@ -405,7 +407,7 @@ RESULT eDVBFrontendParameters::calculateDifference(const iDVBFrontendParameters 
 			else if (oterrestrial.system != terrestrial.system)
 				diff = 1 << 30;
 			else
-				diff = abs(terrestrial.frequency - oterrestrial.frequency) / 1000;
+				diff = absdiff(terrestrial.frequency, oterrestrial.frequency) / 1000;
 			return 0;
 		}
 		case iDVBFrontend::feATSC:
@@ -420,7 +422,7 @@ RESULT eDVBFrontendParameters::calculateDifference(const iDVBFrontendParameters 
 				diff = 1 << 29;
 			else
 			{
-				diff = abs(atsc.frequency - oatsc.frequency);
+				diff = absdiff(atsc.frequency, oatsc.frequency);
 			}
 			return 0;
 		}
@@ -999,6 +1001,10 @@ void eDVBFrontend::calculateSignalQuality(int snr, int &signalquality, int &sign
 		if (snr != 0)
 			ret = 10 * (int)(-100 * (log10(snr) - log10(255)));
 	}
+	else if (strstr(m_description, "Si2166B")) // DM7080HD/DM7020HD/DM820/DM800se DVB-S2 Dual NIM
+	{
+		ret = (snr * 240) >> 8;
+	}
 	else if (strstr(m_description, "BCM4506") || strstr(m_description, "BCM4505"))
 	{
 		ret = (snr * 100) >> 8;
@@ -1010,6 +1016,7 @@ void eDVBFrontend::calculateSignalQuality(int snr, int &signalquality, int &sign
 	else if (!strcmp(m_description, "Vuplus DVB-S NIM(AVL6222)")) // VU+ DVB-S2 Dual NIM
 	{
 		ret = (int)((((double(snr) / (65536.0 / 100.0)) * 0.1244) + 2.5079) * 100);
+		sat_max = 1490;
 	}
 	else if (!strcmp(m_description, "Vuplus DVB-S NIM(AVL6211)")) // VU+ DVB-S2 Dual NIM
 	{
@@ -1029,7 +1036,7 @@ void eDVBFrontend::calculateSignalQuality(int snr, int &signalquality, int &sign
 	}
 	else if (!strcmp(m_description, "Vuplus DVB-S NIM(7376 FBC)")) // VU+ Solo4k
 	{
-		ret = (int)((((double(snr) / (65536.0 / 100.0)) * 0.1850) - 0.3500) * 100);
+		ret = (int)((((double(snr) / (65536.0 / 100.0)) * 0.1480) + 0.9560) * 100);
 	}
 	else if (!strcmp(m_description, "BCM7362 (internal) DVB-S2")) // Xsarius
 	{
@@ -1231,20 +1238,25 @@ int eDVBFrontend::readFrontendData(int type)
 					{
 						for(unsigned int i=0; i<prop[0].u.st.len; i++)
 						{
-							if (prop[0].u.st.stat[i].scale == FE_SCALE_DECIBEL)
+							if (prop[0].u.st.stat[i].scale == FE_SCALE_DECIBEL &&
+								type == iFrontendInformation_ENUMS::signalQualitydB)
+							{
 								signalqualitydb = prop[0].u.st.stat[i].svalue / 10;
-							else if (prop[0].u.st.stat[i].scale == FE_SCALE_RELATIVE)
+								return signalqualitydb;
+							}
+							else if (prop[0].u.st.stat[i].scale == FE_SCALE_RELATIVE &&
+								type == iFrontendInformation_ENUMS::signalQuality)
+							{
 								signalquality = prop[0].u.st.stat[i].svalue;
+								return signalquality;
+							}
 						}
 					}
 				}
 #endif
-				// fallback to old DVB API
-				if(!signalquality && !signalqualitydb || strstr(m_description, "Sundtek"))
-				{
-					int snr = readFrontendData(iFrontendInformation_ENUMS::snrValue);
-					calculateSignalQuality(snr, signalquality, signalqualitydb);
-				}
+				/* fallback to old DVB API */
+				int snr = readFrontendData(iFrontendInformation_ENUMS::snrValue);
+				calculateSignalQuality(snr, signalquality, signalqualitydb);
 
 				if (type == iFrontendInformation_ENUMS::signalQuality)
 				{

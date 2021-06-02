@@ -92,7 +92,7 @@ def InitUsageConfig():
 	for i in (3600, 7200, 14400):
 		h = i / 3600
 		choicelist.append((str(i), ngettext("%d hour", "%d hours", h) % h))
-	config.usage.hdd_standby = ConfigSelection(default = "300", choices = [("0", _("No standby"))] + choicelist)
+	config.usage.hdd_standby = ConfigSelection(default = "-1", choices = [("-1", _("Controlled outside")), ("0", _("No standby"))] + choicelist)
 	config.usage.output_12V = ConfigSelection(default = "do not change", choices = [
 		("do not change", _("Do not change")), ("off", _("Off")), ("on", _("On")) ])
 
@@ -502,7 +502,7 @@ def InitUsageConfig():
 	if SystemInfo["HasBypassEdidChecking"]:
 		def setHasBypassEdidChecking(configElement):
 			open(SystemInfo["HasBypassEdidChecking"], "w").write(configElement.value)
-		config.av.bypassEdidChecking = ConfigSelection(default = "00000000", choices = [ ("00000001", _("Yes")), ("00000000", _("No"))] )
+		config.av.bypassEdidChecking = ConfigSelection(default = "00000001", choices = [ ("00000001", _("Yes")), ("00000000", _("No"))] )
 		config.av.bypassEdidChecking.addNotifier(setHasBypassEdidChecking)
 
 	if SystemInfo["HasColorspace"]:
@@ -579,7 +579,7 @@ def InitUsageConfig():
 		("twn hkn",_("Traditional Chinese")),
 		("ces cze", _("Czech")),
 		("dan", _("Danish")),
-		("dut ndl", _("Dutch")),
+		("dut ndl nld", _("Dutch")),
 		("eng qaa", _("English")),
 		("est", _("Estonian")),
 		("fin", _("Finnish")),

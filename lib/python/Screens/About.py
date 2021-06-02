@@ -11,12 +11,14 @@ from Components.Button import Button
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
 
+from Screens.Console import Console
 from Tools.StbHardware import getFPVersion
+from Tools.Directories import fileExists
 from enigma import eTimer, eLabel, eConsoleAppContainer
-
 from Components.HTMLComponent import HTMLComponent
 from Components.GUIComponent import GUIComponent
 import skin
+import urllib
 
 class About(Screen):
 	def __init__(self, session):
@@ -51,7 +53,7 @@ class About(Screen):
 		if fp_version is None:
 			fp_version = ""
 		else:
-			fp_version = _("Frontprocessor version: %d") % fp_version
+			fp_version = _("Frontprocessor version: %s") % fp_version
 			AboutText += fp_version + "\n"
 
 		self["FPVersion"] = StaticText(fp_version)
@@ -90,29 +92,46 @@ class About(Screen):
 			AboutText += "\n" + x[0] + ": " + x[1]
 
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
-		self["key_green"] = Button(_("Translations"))
-		self["key_red"] = Button(_("Latest Commits"))
+		self["key_green"] = Button(_("Space on partitions"))
+		self["key_red"] = Button(_("System processes"))
+		self["key_yellow"] = Button(_("Network interfaces"))
 		self["key_blue"] = Button(_("Memory Info"))
 
 		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions"],
 			{
 				"cancel": self.close,
 				"ok": self.close,
-				"red": self.showCommits,
-				"green": self.showTranslationInfo,
+				"red": self.runps,
+				"green": self.rundf,
+				"yellow": self.runifconfig,
 				"blue": self.showMemoryInfo,
 				"up": self["AboutScrollLabel"].pageUp,
 				"down": self["AboutScrollLabel"].pageDown
 			})
 
-	def showTranslationInfo(self):
-		self.session.open(TranslationInfo)
+	# def showTranslationInfo(self):
+		# self.session.open(TranslationInfo)
 
 	def showCommits(self):
 		self.session.open(CommitInfo)
 
 	def showMemoryInfo(self):
 		self.session.open(MemoryInfo)
+
+	def runps(self):
+		runlist = []
+		runlist.append( ('ps') )
+		self.session.open(Console, title = _("System processes"), cmdlist = runlist)
+
+	def rundf(self):
+		runlist = []
+		runlist.append( ('df -h') )
+		self.session.open(Console, title = _("Space on partitions"), cmdlist = runlist)
+
+	def runifconfig(self):
+		runlist = []
+		runlist.append( ('ifconfig') )
+		self.session.open(Console, title = _("Network interfaces"), cmdlist = runlist)
 
 class TranslationInfo(Screen):
 	def __init__(self, session):
@@ -188,31 +207,14 @@ class CommitInfo(Screen):
 		self.Timer.start(50, True)
 
 	def readGithubCommitLogs(self):
-		url = 'https://api.github.com/repos/openpli/%s/commits' % self.projects[self.project][0]
-		commitlog = ""
-		from datetime import datetime
-		from json import loads
-		from urllib2 import urlopen
-		try:
-			commitlog += 80 * '-' + '\n'
-			commitlog += url.split('/')[-2] + '\n'
-			commitlog += 80 * '-' + '\n'
+		if fileExists('/etc/release'):
 			try:
-				# OpenPli 5.0 uses python 2.7.11 and here we need to bypass the certificate check
-				from ssl import _create_unverified_context
-				log = loads(urlopen(url, timeout=5, context=_create_unverified_context()).read())
+				txt = urllib.urlopen('http://graterlia.xunil.pl/goscore_sh4_changes/lista_zmian.txt').read()
 			except:
-				log = loads(urlopen(url, timeout=5).read())
-			for c in log:
-				creator = c['commit']['author']['name']
-				title = c['commit']['message']
-				date = datetime.strptime(c['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ').strftime('%x %X')
-				commitlog += date + ' ' + creator + '\n' + title + 2 * '\n'
-			commitlog = commitlog.encode('utf-8')
-			self.cachedProjects[self.projects[self.project][1]] = commitlog
-		except:
-			commitlog += _("Currently the commit log cannot be retrieved - please try later again")
-		self["AboutScrollLabel"].setText(commitlog)
+				txt = (_("Cannot get data, the connection to the server (xunil.pl) failed - please try later again"))
+		else:
+			txt = (_("System version undefined"))
+		self["AboutScrollLabel"].setText(txt)
 
 	def updateCommitLogs(self):
 		if self.cachedProjects.has_key(self.projects[self.project][1]):

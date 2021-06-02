@@ -60,7 +60,7 @@ class SecConfigure:
 		sec.setLNBIncreasedVoltage(False)
 		sec.setRepeats(0)
 		sec.setFastDiSEqC(fastDiSEqC)
-		sec.setSeqRepeat(False)
+		sec.setSeqRepeat(True)
 		sec.setCommandOrder(0)
 
 		#user values
@@ -1076,7 +1076,7 @@ def InitSecParams():
 	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_FINAL_VOLTAGE_CHANGE, configElement.value))
 	config.sec.delay_after_final_voltage_change = x
 
-	x = ConfigInteger(default=120, limits = (0, 9999))
+	x = ConfigInteger(default=60, limits = (0, 9999))
 	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_BETWEEN_DISEQC_REPEATS, configElement.value))
 	config.sec.delay_between_diseqc_repeats = x
 
@@ -1221,7 +1221,7 @@ def InitNimManager(nimmgr, update_slots = []):
 
 	unicable_choices = {
 		"unicable_lnb": _("Unicable LNB"),
-		"unicable_matrix": _("Unicable Martix"),
+		"unicable_matrix": _("Unicable Matrix"),
 		"unicable_user": "Unicable "+_("User defined")}
 	unicable_choices_default = "unicable_lnb"
 
@@ -1287,7 +1287,7 @@ def InitNimManager(nimmgr, update_slots = []):
 				if lnb == 1:
 					section.unicable = ConfigSelection(unicable_choices, unicable_choices_default)
 				elif lnb == 2:
-					section.unicable = ConfigSelection(choices = {"unicable_matrix": _("Unicable Martix"),"unicable_user": "Unicable "+_("User defined")}, default = "unicable_matrix")
+					section.unicable = ConfigSelection(choices = {"unicable_matrix": _("Unicable Matrix"),"unicable_user": "Unicable "+_("User defined")}, default = "unicable_matrix")
 				else:
 					section.unicable = ConfigSelection(choices = {"unicable_user": _("User defined")}, default = "unicable_user")
 
@@ -1453,10 +1453,16 @@ def InitNimManager(nimmgr, update_slots = []):
 				tmp.lnb = lnb
 				nim.advanced.sat[x] = tmp
 
+	def scpcSearchRangeChanged(configElement):
+		fe_id = configElement.fe_id
+		slot_id = configElement.slot_id
+		if os.path.exists("/proc/stb/frontend/%d/use_scpc_optimized_search_range" % fe_id):
+			open("/proc/stb/frontend/%d/use_scpc_optimized_search_range" % (fe_id), "w").write(configElement.value)
+
 	def toneAmplitudeChanged(configElement):
 		fe_id = configElement.fe_id
 		slot_id = configElement.slot_id
-		if nimmgr.nim_slots[slot_id].description == 'Alps BSBE2':
+		if os.path.exists("/proc/stb/frontend/%d/tone_amplitude" % fe_id):
 			open("/proc/stb/frontend/%d/tone_amplitude" %(fe_id), "w").write(configElement.value)
 
 	def createSatConfig(nim, x, empty_slots):
@@ -1467,6 +1473,10 @@ def InitNimManager(nimmgr, update_slots = []):
 			nim.toneAmplitude.fe_id = x - empty_slots
 			nim.toneAmplitude.slot_id = x
 			nim.toneAmplitude.addNotifier(toneAmplitudeChanged)
+			nim.scpcSearchRange = ConfigSelection([("0", _("no")), ("1", _("yes"))], "0")
+			nim.scpcSearchRange.fe_id = x - empty_slots
+			nim.scpcSearchRange.slot_id = x
+			nim.scpcSearchRange.addNotifier(scpcSearchRangeChanged)
 			nim.diseqc13V = ConfigYesNo(False)
 			nim.diseqcMode = ConfigSelection(diseqc_mode_choices, "diseqc_a_b")
 			nim.connectedTo = ConfigSelection([(str(id), nimmgr.getNimDescription(id)) for id in nimmgr.getNimListOfType("DVB-S") if id != x])
@@ -1549,41 +1559,54 @@ def InitNimManager(nimmgr, update_slots = []):
 			nim.atsc = ConfigSelection(choices = list)
 
 	def tunerTypeChanged(nimmgr, configElement, initial=False):
-		configElement.save()
 		fe_id = configElement.fe_id
 		eDVBResourceManager.getInstance().setFrontendType(nimmgr.nim_slots[fe_id].frontend_id, nimmgr.nim_slots[fe_id].getType())
 		try:
-			frontend = eDVBResourceManager.getInstance().allocateRawChannel(fe_id).getFrontend()
-			if not os.path.exists("/proc/stb/frontend/%d/mode" % fe_id) and frontend.setDeliverySystem(nimmgr.nim_slots[fe_id].getType()):
+			raw_channel = eDVBResourceManager.getInstance().allocateRawChannel(fe_id)
+			if raw_channel is None:
+				self.session.nav.stopService()
+				raw_channel = eDVBResourceManager.getInstance().allocateRawChannel(fe_id)
+				if raw_channel is None:
+					print "[InitNimManager] %d: tunerTypeChanged to '%s' failed (BUSY)" %(fe_id, configElement.getText())
+					return
+			frontend = raw_channel.getFrontend()
+			is_changed_mode = os.path.exists("/proc/stb/frontend/%d/mode" % fe_id)
+			if not is_changed_mode and frontend.setDeliverySystem(nimmgr.nim_slots[fe_id].getType()):
 				print "[InitNimManager] tunerTypeChanged feid %d to mode %d" % (fe_id, int(configElement.value))
 				InitNimManager(nimmgr)
-				return
+				configElement.save()
+			elif is_changed_mode:
+				cur_type = int(open("/proc/stb/frontend/%d/mode" % (fe_id), "r").read())
+				if cur_type != int(configElement.value):
+					print "[InitNimManager] tunerTypeChanged feid %d from %d to mode %d" % (fe_id, cur_type, int(configElement.value))
 
-			cur_type = int(open("/proc/stb/frontend/%d/mode" % (fe_id), "r").read())
-			if cur_type != int(configElement.value):
-				print "[InitNimManager] tunerTypeChanged feid %d from %d to mode %d" % (fe_id, cur_type, int(configElement.value))
+					is_dvb_shutdown_timeout = os.path.exists("/sys/module/dvb_core/parameters/dvb_shutdown_timeout")
+					if is_dvb_shutdown_timeout:
+						try:
+							oldvalue = open("/sys/module/dvb_core/parameters/dvb_shutdown_timeout", "r").readline()
+							open("/sys/module/dvb_core/parameters/dvb_shutdown_timeout", "w").write("0")
+						except:
+							print "[InitNimManager] tunerTypeChanged read /sys/module/dvb_core/parameters/dvb_shutdown_timeout failed"
 
-				try:
-					oldvalue = open("/sys/module/dvb_core/parameters/dvb_shutdown_timeout", "r").readline()
-					open("/sys/module/dvb_core/parameters/dvb_shutdown_timeout", "w").write("0")
-				except:
-					print "[InitNimManager] no /sys/module/dvb_core/parameters/dvb_shutdown_timeout available"
+					frontend.closeFrontend()
+					open("/proc/stb/frontend/%d/mode" % (fe_id), "w").write(configElement.value)
+					frontend.reopenFrontend()
 
-				frontend.closeFrontend()
-				open("/proc/stb/frontend/%d/mode" % (fe_id), "w").write(configElement.value)
-				frontend.reopenFrontend()
-				try:
-					open("/sys/module/dvb_core/parameters/dvb_shutdown_timeout", "w").write(oldvalue)
-				except:
-					print "[InitNimManager] no /sys/module/dvb_core/parameters/dvb_shutdown_timeout available"
-				nimmgr.enumerateNIMs()
-				if initial:
-					print "[InitNimManager] tunerTypeChanged force update setting"
-					nimmgr.sec.update()
-			else:
-				print "[InitNimManager] tuner type is already already %d" %cur_type
-		except:
-			pass
+					if is_dvb_shutdown_timeout:
+						try:
+							open("/sys/module/dvb_core/parameters/dvb_shutdown_timeout", "w").write(oldvalue)
+						except:
+							print "[InitNimManager] tunerTypeChanged write to /sys/module/dvb_core/parameters/dvb_shutdown_timeout failed"
+
+					nimmgr.enumerateNIMs()
+					if initial:
+						print "[InitNimManager] tunerTypeChanged force update setting"
+						nimmgr.sec.update()
+					configElement.save()
+				else:
+					print "[InitNimManager] tunerTypeChanged tuner type is already %d" % cur_type
+		except Exception as e:
+			print "[InitNimManager] tunerTypeChanged error: ", e
 
 	empty_slots = 0
 	for slot in nimmgr.nim_slots:

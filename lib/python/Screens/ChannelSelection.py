@@ -134,6 +134,7 @@ class ChannelContextMenu(Screen):
 				"blue": self.showServiceInPiP,
 				"red": self.playMain,
 				"menu": self.openSetup,
+				"1": self.unhideParentalServices,
 				"2": self.renameEntry,
 				"3": self.findCurrentlyPlayed,
 				"5": self.addServiceToBouquetOrAlternative,
@@ -1423,7 +1424,7 @@ class ChannelSelectionBase(Screen):
 
 	def getServiceName(self, ref):
 		str = self.removeModeStr(ServiceReference(ref).getServiceName())
-		if 'User - bouquets' in str:
+		if 'bouquets' in str.lower():
 			return _("User - bouquets")
 		if not str:
 			pathstr = ref.getPath()

@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 import sys, os, time
 from Tools.HardwareInfo import HardwareInfo
+from Tools.Directories import fileExists
 
 def getVersionString():
 	return getImageVersionString()
 
 def getImageVersionString():
 	try:
-		if os.path.isfile('/var/lib/opkg/status'):
-			st = os.stat('/var/lib/opkg/status')
-		elif os.path.isfile('/var/opkg/status'):
+		if os.path.isfile('/var/opkg/status'):
 			st = os.stat('/var/opkg/status')
+		elif os.path.isfile('/var/opkg/status.tmp'):
+			st = os.stat('/var/opkg/status.tmp')
 		else:
 			st = os.stat('/usr/lib/ipkg/status')
 		tm = time.localtime(st.st_mtime)
@@ -48,39 +49,55 @@ def getHardwareTypeString():
 
 def getImageTypeString():
 	try:
-		return open("/etc/issue").readlines()[-2].capitalize().strip()[:-6]
+		return open("/etc/release").read()
 	except:
 		return _("undefined")
 
 def getCPUInfoString():
-	try:
-		cpu_count = 0
-		cpu_speed = 0
-		for line in open("/proc/cpuinfo").readlines():
-			line = [x.strip() for x in line.strip().split(":")]
-			if line[0] in ("system type", "model name"):
-				processor = line[1].split()[0]
-			elif line[0] == "cpu MHz":
-				cpu_speed = "%1.0f" % float(line[1])
-			elif line[0] == "processor":
-				cpu_count += 1
-		if not cpu_speed:
-			try:
-				cpu_speed = int(open("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq").read()) / 1000
-			except:
-				cpu_speed = "-"
-		if os.path.isfile('/proc/stb/fp/temp_sensor_avs'):
-			temperature = open("/proc/stb/fp/temp_sensor_avs").readline().replace('\n','')
-			return "%s %s MHz (%s) %s°C" % (processor, cpu_speed, ngettext("%d core", "%d cores", cpu_count) % cpu_count, temperature)
-		return "%s %s MHz (%s)" % (processor, cpu_speed, ngettext("%d core", "%d cores", cpu_count) % cpu_count)
-	except:
-		return _("undefined")
+		if fileExists("/proc/cpuinfo"):
+			cpu_count = 0
+			processor = cpu_speed = cpu_family = cpu_variant = temp = ''
+			core = _("core")
+			cores = _("cores")
+			for line in open('/proc/cpuinfo'):
+				if "system type" in line:
+					processor = line.split(':')[-1].split()[0].strip().strip('\n')
+				elif "cpu MHz" in line:
+					cpu_speed =  line.split(':')[-1].strip().strip('\n')
+					#cpu_count += 1
+				elif "cpu type" in line:
+					processor = line.split(':')[-1].strip().strip('\n')
+				elif "model name" in line:
+					processor = line.split(':')[-1].strip().strip('\n').replace('Processor ', '')
+				elif "cpu family" in line:
+					cpu_family = line.split(':')[-1].strip().strip('\n')
+				elif "cpu variant" in line:
+					cpu_variant = line.split(':')[-1].strip().strip('\n')
+				elif line.startswith('processor'):
+					cpu_count += 1
+			if not cpu_speed:
+				try:
+					cpu_speed = int(open("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq").read()) / 1000
+				except:
+					cpu_speed = '-'
+			if fileExists("/proc/stb/sensors/temp0/value") and fileExists("/proc/stb/sensors/temp0/unit"):
+				temp = "%s%s%s" % (open("/proc/stb/sensors/temp0/value").read().strip('\n'), unichr(176).encode("latin-1"), open("/proc/stb/sensors/temp0/unit").read().strip('\n'))
+			elif fileExists("/proc/stb/fp/temp_sensor_avs"):
+				temp = "%s%sC" % (open("/proc/stb/fp/temp_sensor_avs").read().strip('\n'), unichr(176).encode("latin-1"))
+				return "%s, %s Mhz (%d %s) %s" % (processor, cpu_speed, cpu_count, cpu_count > 1 and cores or core, temp)
+			return "%s(%s), %s %s" % (processor, cpu_family, cpu_variant, temp)
+		else:
+			return _("undefined")
 
 def getDriverInstalledDate():
 	try:
 		from glob import glob
-		driver = [x.split("-")[-2:-1][0][-8:] for x in open(glob("/var/lib/opkg/info/*-dvb-modules-*.control")[0], "r") if x.startswith("Version:")][0]
-		return  "%s-%s-%s" % (driver[:4], driver[4:6], driver[6:])
+		try:
+			driver = [x.split("-")[-2:-1][0][-8:] for x in open(glob("/var/opkg/info/gst-plugins-dvbmediasink-gos.control")[0], "r") if x.startswith("Version:")][0]
+			return  "%s-%s-%s" % (driver[:4], driver[4:6], driver[6:])
+		except:
+			driver = [x.split("Version:") for x in open(glob("/var/lib/opkg/info/*-dvb-proxy-*.control")[0], "r") if x.startswith("Version:")][0]
+			return  "%s" % driver[1].replace("\n","")
 	except:
 		return _("unknown")
 
