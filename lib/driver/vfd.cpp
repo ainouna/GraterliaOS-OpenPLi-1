@@ -122,7 +122,7 @@ void * start_loop (void *arg)
 	//ioctl(fpc, FRONTPANELSCROLLMODE, &scrollMode);
 
 	// display string
-	char str[] = "        GOS2 - OpenPLi";
+	char str[] = "        SIF2 - OpenPLi";
 	int length = strlen(str);
 	char dispData[MAX_CHARS + 1];
 	int offset = 0;
@@ -184,7 +184,7 @@ void * start_loop (void *arg)
 	evfd vfd;
 	blocked = true;
 	//vfd.vfd_clear_icons();
-	vfd.vfd_write_string("GOS", true);
+	vfd.vfd_write_string("SIF", true);
 	blocked = false;
 	return NULL;
 }
