@@ -1,10 +1,10 @@
 # the implementation here is a bit crappy.
 import time
 from Directories import resolveFilename, SCOPE_CONFIG, fileExists
-from GOSHardwareInfo import GOSHardwareInfo
+from SIFHardwareInfo import SIFHardwareInfo
 
-vfdSIZE = GOSHardwareInfo().get_vfdsize()
-if GOSHardwareInfo().get_rcstype() == 'UHD88':
+vfdSIZE = SIFHardwareInfo().get_vfdsize()
+if SIFHardwareInfo().get_rcstype() == 'UHD88':
     vfdSIZE += 1
 
 
@@ -57,10 +57,10 @@ def profile(id):
 					CurrentText = "E2:%d" % (perc - 1)
 					CurrentText = CurrentText[0:5]
 				elif vfdSIZE == 8:
-					CurrentText = "GOS-%d" % (perc)
+					CurrentText = "SIF-%d" % (perc)
 					CurrentText = CurrentText[0:8]
 				else:  
-					CurrentText = "Start GOS-%d" % (perc)
+					CurrentText = "Start SIF-%d" % (perc)
 					CurrentText = CurrentText[0:14]
 				try:
 					open("/proc/progress", "w").write("%d \n" % perc)
