@@ -18,7 +18,7 @@ else:
     boxtype = rcstype
 print "Detected: rcstype=%s, vfdsize=%d, boxtype=%s" % (rcstype,vfdsize,boxtype)
 
-class SIFHardwareInfo:
+class GOSHardwareInfo:
     def get_rcstype(self):
         return rcstype
 
