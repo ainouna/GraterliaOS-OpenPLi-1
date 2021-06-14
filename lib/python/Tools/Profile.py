@@ -57,10 +57,10 @@ def profile(id):
 					CurrentText = "E2:%d" % (perc - 1)
 					CurrentText = CurrentText[0:5]
 				elif vfdSIZE == 8:
-					CurrentText = "SIF-%d" % (perc)
+					CurrentText = "GOS-%d" % (perc)
 					CurrentText = CurrentText[0:8]
 				else:  
-					CurrentText = "Start SIF-%d" % (perc)
+					CurrentText = "Start GOS-%d" % (perc)
 					CurrentText = CurrentText[0:14]
 				try:
 					open("/proc/progress", "w").write("%d \n" % perc)
