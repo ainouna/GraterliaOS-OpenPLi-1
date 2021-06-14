@@ -1,10 +1,10 @@
 # the implementation here is a bit crappy.
 import time
 from Directories import resolveFilename, SCOPE_CONFIG, fileExists
-from SIFHardwareInfo import SIFHardwareInfo
+from GOSHardwareInfo import GOSHardwareInfo
 
-vfdSIZE = SIFHardwareInfo().get_vfdsize()
-if SIFHardwareInfo().get_rcstype() == 'UHD88':
+vfdSIZE = GOSHardwareInfo().get_vfdsize()
+if GOSHardwareInfo().get_rcstype() == 'UHD88':
     vfdSIZE += 1
 
 
