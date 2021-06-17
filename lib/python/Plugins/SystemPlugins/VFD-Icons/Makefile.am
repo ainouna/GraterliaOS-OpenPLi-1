@@ -1,6 +1,6 @@
 installdir = $(pkglibdir)/python/Plugins/SystemPlugins/VFD-Icons
 
-SUBDIRS = meta locale
+SUBDIRS = meta 
 
 install_PYTHON = \
 	__init__.py \
