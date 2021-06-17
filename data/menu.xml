@@ -13,6 +13,13 @@
 	<code> .. code .. </code>
 		"exec"s code
 -->
+		<item weight="0" level="1" text="Graterlia OS manager" entryID="Graterlia OS manager">
+<code>
+from Plugins.Extensions.GOSmanager.plugin import GOSmanagerWidget
+self.session.open(GOSmanagerWidget)
+</code>  
+		</item>		
+	
 		<item level="0" text="Timer" entryID="timer_edit"><screen module="TimerEdit" screen="TimerEditList"/></item>
 <!--		<item level="1" text="VCR scart" entryID="scart_switch" configcondition="config.usage.show_vcr_scart" requires="ScartSwitch"><code>self.session.scart.VCRSbChanged(3)</code></item> -->
 
