@@ -8,10 +8,16 @@ AM_CPPFLAGS = \
 	-include $(top_builddir)/enigma2_config.h
 
 if ENABLE_LIBEPLAYER3
+if ENABLE_MEDIAFWGSTREAMER
 AM_CPPFLAGS += \
-	-I$(top_srcdir)/../../apps/tools/libeplayer3/include
+	-I$(top_srcdir)/../../tools/libeplayer3/include
+else
+AM_CPPFLAGS += \
+	-D__STDC_CONSTANT_MACROS \
+	-D__STDC_FORMAT_MACROS \
+	-I$(top_srcdir)/../../tools/eplayer3/include
 endif
-
+endif
 # initialize these, to be filled with targets in the included files
 noinst_LIBRARIES=
 BUILT_SOURCES=
