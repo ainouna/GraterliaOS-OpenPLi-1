@@ -32,7 +32,7 @@ AM_CONDITIONAL(HAVE_FAKE_GIT_DIR, test -f "$srcdir/.git/last_commit_info")
 dnl versions of gstreamer and plugins-base
 AC_ARG_WITH(gstversion,
 	AS_HELP_STRING([--with-gstversion],[use gstreamer version (major.minor)]),
-	[GST_MAJORMINOR=$withval],[GST_MAJORMINOR=0.10])
+	[GST_MAJORMINOR=$withval],[GST_MAJORMINOR=1.0])
 
 AC_ARG_ENABLE(libeplayer3,
 	[  --enable-libeplayer3          enable TDT libeplayer3 as player engine supportt],
@@ -60,6 +60,25 @@ else
 fi
 PKG_CHECK_MODULES(LIBDDVD, libdreamdvd, HAVE_LIBDDVD="yes", HAVE_LIBDDVD="no")
 AM_CONDITIONAL(HAVE_LIBDDVD, test "$HAVE_LIBDDVD" = "yes")
+
+AC_ARG_ENABLE([run_from_usb],
+	[AS_HELP_STRING(--enable-run_from_usb,    enable topfield run_from_usb stuff)],
+	[case "${enableval}" in
+		yes) enable_run_from_usb=true ;;
+		no) enable_run_from_usb=false ;;
+		*) AC_MSG_ERROR([bad value ${enableval} for --enable-run_from_usb]) ;;
+	esac])
+AM_CONDITIONAL([ENABLE_RUN_FROM_USB], [test x$enable_run_from_usb = xtrue])
+
+AC_ARG_ENABLE([hs7429],
+	[AS_HELP_STRING(--enable-hs7429,    enable topfield hs7429 stuff)],
+	[case "${enableval}" in
+		yes) enable_hs7429=true ;;
+		no) enable_hs7429=false ;;
+		*) AC_MSG_ERROR([bad value ${enableval} for --enable-hs7429]) ;;
+	esac])
+AM_CONDITIONAL([ENABLE_HS7429], [test x$enable_hs7429 = xtrue])
+
 
 AC_ARG_ENABLE([tf7700],
 	[AS_HELP_STRING(--enable-tf7700,    enable topfield tf7700 stuff)],
