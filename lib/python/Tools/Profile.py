@@ -4,11 +4,11 @@ from Directories import resolveFilename, SCOPE_CONFIG, fileExists
 from GOSHardwareInfo import GOSHardwareInfo
 
 vfdSIZE = GOSHardwareInfo().get_vfdsize()
-if GOSHardwareInfo().get_rcstype() == 'UHD88':
+if GOSHardwareInfo().get_rcstype() == 'HS7429':
     vfdSIZE += 1
 
 
-PERCENTAGE_START = 20
+PERCENTAGE_START = 80
 PERCENTAGE_END = 100
 LAST_PERCENTAGE = 0
 profile_start = time.time()
@@ -57,10 +57,10 @@ def profile(id):
 					CurrentText = "E2:%d" % (perc - 1)
 					CurrentText = CurrentText[0:5]
 				elif vfdSIZE == 8:
-					CurrentText = "GOS-%d" % (perc)
+					CurrentText = "GOS-2024%d" % (perc)
 					CurrentText = CurrentText[0:8]
 				else:  
-					CurrentText = "Start GOS-%d" % (perc)
+					CurrentText = "Start GOS-2024%d" % (perc)
 					CurrentText = CurrentText[0:14]
 				try:
 					open("/proc/progress", "w").write("%d \n" % perc)
